@@ -1,0 +1,20 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.ipynb_checkpoints/
+
+# Raw large external archives (to keep git repo lightweight and fast)
+# These can be automatically re-downloaded via scripts/02_process_stats_nz.py
+# and scripts/03_download_eurostat_comext.py:
+raw_data/new_zealand/*.zip
+raw_data/eurostat/*.csv
+
+# Temporary files and Office locks
+~$*
+*.tmp
+*.log
+
+# Keep manifests and ecb rates
+!manifests/
+!raw_data/ecb/ecb_exr_jpy_nzd_eur_2022_2024.csv

@@ -1,0 +1,26 @@
+[
+  {
+    "source": "Stats NZ",
+    "dataset": "2022_Imports_HS10_by_Country",
+    "url": "https://www3.stats.govt.nz/HS10_by_Country/2022_Imports_HS10_by_Country.zip",
+    "file_name": "2022_Imports_HS10_by_Country.zip",
+    "file_size_bytes": 11071993,
+    "sha256": "c91e7ec7d38f8d8b8c29116d9b6c58f046da8a0037f46e331475b7623259be90"
+  },
+  {
+    "source": "Stats NZ",
+    "dataset": "2023_Imports_HS10_by_Country",
+    "url": "https://www3.stats.govt.nz/HS10_by_Country/2023_Imports_HS10_by_Country.zip",
+    "file_name": "2023_Imports_HS10_by_Country.zip",
+    "file_size_bytes": 11018635,
+    "sha256": "94a9fb44e85566e9559fad40353b6ed71ef18ae8b326ab492d16a70974d2120b"
+  },
+  {
+    "source": "Stats NZ",
+    "dataset": "2024_Imports_HS10_by_Country",
+    "url": "https://www3.stats.govt.nz/HS10_by_Country/2024_Imports_HS10_by_Country.zip",
+    "file_name": "2024_Imports_HS10_by_Country.zip",
+    "file_size_bytes": 10992384,
+    "sha256": "6d333bfbb994568758b37a6c602416e9580798ed6bc32dc87449677ab0886a53"
+  }
+]
