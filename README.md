@@ -63,13 +63,13 @@ Dự án phân tích định lượng tác động của cú sốc tuyến Biể
 | `CIF_EUR` | Float | Giá trị CIF tính bằng EUR (NZD được đổi bằng tỷ giá trung bình tháng ECB). |
 | `KG` | Float | Khối lượng hàng hóa (kg). |
 | `Currency_goc`| String | Đơn vị tiền tệ gốc của hải quan sở tại (`EUR`, `NZD`, `JPY`). |
-| `S1_sea_2022` | Float | Tỷ trọng giá trị nhập khẩu bằng đường biển tại biên giới EU năm 2022 của mã HS4. |
-| `S2_lnkgeur_2022`| Float | $\ln(\text{tổng kg 2022} / \text{tổng CIF EUR 2022})$ của mã HS4. |
-| `ln_CIF` | Float | $\ln(\text{CIF\_EUR})$ cho các ô có giá trị CIF dương. |
+| `S1_sea_2022` | Float | Tỷ trọng giá trị nhập khẩu bằng đường biển tại biên giới EU năm 2022 của mã HS4 (`S1`). |
+| `S2_lnkgeur_2022`| Float | `ln(tổng kg 2022 / tổng CIF EUR 2022)` của mã HS4 (`S2`). |
+| `ln_CIF` | Float | `ln(CIF_EUR)` cho các ô có giá trị CIF dương. |
 | `in_sample` | 0/1 | `= 1` khi `Excl_1112_2023 == 0` và `Status == 'positive'`. Mẫu sạch cho hồi quy. |
-| `EUxPostxS1` | Float | Tương tác chính: $\text{EU} \times \text{Post} \times S_1$. |
-| `EUxPostxS2` | Float | Tương tác chính: $\text{EU} \times \text{Post} \times S_2$. |
-| `kg_per_EUR_obs`| Float | $\text{KG} / \text{CIF\_EUR}$ (nghịch đảo của đơn giá EUR/kg). |
+| `EUxPostxS1` | Float | Tương tác chính: `EU × Post × S1`. |
+| `EUxPostxS2` | Float | Tương tác chính: `EU × Post × S2`. |
+| `kg_per_EUR_obs`| Float | `KG / CIF_EUR` (nghịch đảo của đơn giá EUR/kg). |
 
 ---
 
