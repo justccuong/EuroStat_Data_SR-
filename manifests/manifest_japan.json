@@ -1,0 +1,26 @@
+[
+  {
+    "year": 2022,
+    "filename": "import_asia_2022.csv",
+    "source": "Japan Ministry of Finance / e-Stat (Trade Statistics of Japan)",
+    "url": "https://www.e-stat.go.jp/en/stat-search/file-download?statInfId=000040117476&fileKind=1",
+    "sha256": "d97069ae341b86597a5c3a635f6d4d5ac50b0cf468315285ced4f4518b0726b5",
+    "bytes": 6131595
+  },
+  {
+    "year": 2023,
+    "filename": "import_asia_2023.csv",
+    "source": "Japan Ministry of Finance / e-Stat (Trade Statistics of Japan)",
+    "url": "https://www.e-stat.go.jp/en/stat-search/file-download?statInfId=000040223264&fileKind=1",
+    "sha256": "40582f330660a24a16bd32a37344ad77c94119d754aaf0c4833afd083c662fbc",
+    "bytes": 6091975
+  },
+  {
+    "year": 2024,
+    "filename": "import_asia_2024.csv",
+    "source": "Japan Ministry of Finance / e-Stat (Trade Statistics of Japan)",
+    "url": "https://www.e-stat.go.jp/en/stat-search/file-download?statInfId=000040368888&fileKind=1",
+    "sha256": "0c37399089a882df592bdbdc93671299442179d1176fce1878fe29b4e0c41954",
+    "bytes": 6118336
+  }
+]

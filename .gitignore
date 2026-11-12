@@ -9,6 +9,7 @@ __pycache__/
 # and scripts/03_download_eurostat_comext.py:
 raw_data/new_zealand/*.zip
 raw_data/eurostat/*.csv
+raw_data/japan/*.csv
 
 # Temporary files and Office locks
 ~$*

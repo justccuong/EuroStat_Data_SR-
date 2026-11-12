@@ -153,14 +153,54 @@ def main():
             ln_cif = np.log(cif_eur) if pd.notnull(cif_eur) and cif_eur > 0 else np.nan
             in_sample = 1 if (excl == 0 and status == 'positive') else 0
 
-            eux_post_s1 = 0 * post * s1 if pd.notnull(s1) else 0.0
-            eux_post_s2 = 0 * post * s2 if pd.notnull(s2) else 0.0
+            eux_post_s1 = 0.0
+            eux_post_s2 = 0.0
             kg_per_eur = (kg_val / cif_eur) if (pd.notnull(kg_val) and pd.notnull(cif_eur) and cif_eur > 0) else np.nan
 
             panel_records.append({
                 'HS4': code, 'Market': 'New Zealand', 'Group': 'Comparison', 'Year': y, 'Month': m,
                 'EU': 0, 'Post': post, 'Excl_1112_2023': excl, 'Status': status,
                 'CIF_EUR': cif_eur, 'KG': kg_val, 'Currency_goc': 'NZD',
+                'S1_sea_2022': s1, 'S2_lnkgeur_2022': s2, 'ln_CIF': ln_cif,
+                'in_sample': in_sample, 'EUxPostxS1': eux_post_s1, 'EUxPostxS2': eux_post_s2,
+                'kg_per_EUR_obs': kg_per_eur
+            })
+
+    # Japan integration
+    jp_processed = os.path.join(base_dir, "processed_data", "japan_monthly_509_2022_2024.csv")
+    if os.path.exists(jp_processed):
+        df_jp = pd.read_csv(jp_processed)
+        print(f"Integrating Japan monthly data: {len(df_jp)} records...")
+        for _, row in df_jp.iterrows():
+            code = str(row['HS4']).zfill(4)
+            y = int(row['Year'])
+            m = int(row['Month'])
+            cif_eur = row['CIF_EUR']
+            kg_val = row['KG']
+
+            c_chars = hs4_chars.get(code, {})
+            s1 = c_chars.get('S1_sea_2022', np.nan)
+            s2 = c_chars.get('S2_lnkgeur_2022', np.nan)
+
+            if y == 2022 or (y == 2023 and m <= 10):
+                post, excl = 0, 0
+            elif y == 2023 and m in [11, 12]:
+                post, excl = 0, 1
+            else:
+                post, excl = 1, 0
+
+            status = 'positive' if pd.notnull(cif_eur) and cif_eur > 0 else 'reported_zero'
+            ln_cif = np.log(cif_eur) if pd.notnull(cif_eur) and cif_eur > 0 else np.nan
+            in_sample = 1 if (excl == 0 and status == 'positive') else 0
+
+            eux_post_s1 = 0.0
+            eux_post_s2 = 0.0
+            kg_per_eur = (kg_val / cif_eur) if (pd.notnull(kg_val) and pd.notnull(cif_eur) and cif_eur > 0) else np.nan
+
+            panel_records.append({
+                'HS4': code, 'Market': 'Japan', 'Group': 'Comparison', 'Year': y, 'Month': m,
+                'EU': 0, 'Post': post, 'Excl_1112_2023': excl, 'Status': status,
+                'CIF_EUR': cif_eur, 'KG': kg_val, 'Currency_goc': 'JPY',
                 'S1_sea_2022': s1, 'S2_lnkgeur_2022': s2, 'ln_CIF': ln_cif,
                 'in_sample': in_sample, 'EUxPostxS1': eux_post_s1, 'EUxPostxS2': eux_post_s2,
                 'kg_per_EUR_obs': kg_per_eur
@@ -179,10 +219,22 @@ def main():
     print(f"Exported: {csv_path}")
 
     xlsx_path = os.path.join(out_dir, "master_panel.xlsx")
-    with pd.ExcelWriter(xlsx_path, engine='openpyxl') as writer:
-        df_panel.iloc[:50000].to_excel(writer, sheet_name="Panel_Sample_50k", index=False)
-        df_hs4_chars.to_excel(writer, sheet_name="HS4_2022_Chars", index=False)
-    print(f"Exported: {xlsx_path}")
+    try:
+        with pd.ExcelWriter(xlsx_path, engine='openpyxl') as writer:
+            df_panel.iloc[:50000].to_excel(writer, sheet_name="Panel_Sample_50k", index=False)
+            df_hs4_chars.to_excel(writer, sheet_name="HS4_2022_Chars", index=False)
+        print(f"Exported: {xlsx_path}")
+    except Exception as e:
+        print(f"Notice (master_panel.xlsx): {e}")
+
+    xlsx_full_path = os.path.join(out_dir, "master_panel_full.xlsx")
+    try:
+        with pd.ExcelWriter(xlsx_full_path, engine='openpyxl') as writer:
+            df_panel.to_excel(writer, sheet_name="Panel_Full", index=False)
+            df_hs4_chars.to_excel(writer, sheet_name="HS4_2022_Chars", index=False)
+        print(f"Exported: {xlsx_full_path}")
+    except Exception as e:
+        print(f"Notice (master_panel_full.xlsx): {e}")
 
 if __name__ == "__main__":
     main()

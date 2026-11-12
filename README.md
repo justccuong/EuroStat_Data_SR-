@@ -22,17 +22,22 @@ Dự án phân tích định lượng tác động của cú sốc tuyến Biể
 │   ├── 01_download_ecb_exchange_rates.py           # Tải chuỗi tỷ giá tham chiếu ECB (JPY, NZD -> EUR)
 │   ├── 02_process_stats_nz.py                      # Tải và xử lý số liệu Stats NZ (2022-2024)
 │   ├── 03_download_eurostat_comext.py              # Kéo tự động dữ liệu Eurostat Comext DS-059334
+│   ├── 03b_process_japan_customs.py                # Tải và xử lý dữ liệu Hải quan Nhật Bản e-Stat (2022-2024)
 │   ├── 04_build_master_panel.py                    # Hợp nhất bảng Panel, tính S1, S2, Post, in_sample
 │   └── 05_generate_audit_reports.py                # Sinh bảng kiểm tra phục vụ nghiệm thu
 │
 ├── manifests/                                      # Audit Trail: Chứng minh tính toàn vẹn dữ liệu
 │   ├── manifest_eurostat.json                      # Ghi URL, timestamp, SHA-256 từng batch Eurostat
-│   └── manifest_nz.json                            # Ghi URL, timestamp, SHA-256 từng file Stats NZ
+│   ├── manifest_nz.json                            # Ghi URL, timestamp, SHA-256 từng file Stats NZ
+│   └── manifest_japan.json                         # Ghi URL, timestamp, SHA-256 từng file e-Stat Nhật Bản
 │
 ├── processed_data/                                 # DỮ LIỆU ĐÃ LÀM SẠCH (READY FOR ANALYSIS)
-│   ├── master_panel_stata.dta                      # File dữ liệu Stata hoàn chỉnh (217.249 dòng)
-│   ├── master_panel.xlsx                           # File Excel bảng Panel & Bảng S1, S2
+│   ├── master_panel_stata.dta                      # File dữ liệu Stata hoàn chỉnh (233.686 dòng)
+│   ├── master_panel_full.xlsx                      # File Excel Full 100% toàn bộ 233.686 dòng
+│   ├── master_panel.xlsx                           # File Excel mẫu tiện xem (Panel 50k & Bảng S1, S2)
 │   ├── master_panel.csv                            # File CSV bảng Panel đầy đủ
+│   ├── japan_monthly_509_2022_2024.csv             # Chuỗi tháng của Nhật Bản (2022-2024)
+│   ├── nz_monthly_509_2022_2024.csv                # Chuỗi tháng của New Zealand (2022-2024)
 │   ├── HS4_2022_characteristics.csv                # Bảng giá trị S1 (share sea) & S2 (ln kg/EUR) 2022
 │   ├── audit_table_by_market.csv                   # Bảng kiểm số quan sát, số mã theo thị trường
 │   ├── audit_table_by_month.csv                    # Bảng kiểm diễn biến 36 tháng
@@ -41,6 +46,7 @@ Dự án phân tích định lượng tác động của cú sốc tuyến Biể
 └── raw_data/                                       # Dữ liệu thô tải từ các cổng thống kê chính thức
     ├── ecb/                                        # Tỷ giá gốc ECB
     ├── eurostat/                                   # 34 batch raw CSV từ Eurostat
+    ├── japan/                                      # 3 file CSV gốc Asia Import từ e-Stat Nhật Bản
     └── new_zealand/                                # 3 file zip gốc từ Stats NZ
 ```
 
@@ -53,7 +59,7 @@ Dự án phân tích định lượng tác động của cú sốc tuyến Biể
 | Tên biến | Kiểu | Ý nghĩa và Công thức tính |
 | :--- | :---: | :--- |
 | `HS4` | String | Mã HS 4 chữ số (chuỗi 4 ký tự, giữ số 0 đầu: `'0303'`, `'0901'`...). |
-| `Market` | String | Tên thị trường nhập khẩu (từng nước trong EU27, EU27 (Total), New Zealand). |
+| `Market` | String | Tên thị trường nhập khẩu (27 nước EU27, EU27 Total, New Zealand, Japan). |
 | `Group` | String | Nhóm thị trường: `'EU'` hoặc `'Comparison'`. |
 | `Year`, `Month` | Integer | Năm (2022–2024) và Tháng (1–12), tổng cộng 36 tháng. |
 | `EU` | 0/1 | Biến chỉ thị: `= 1` nếu là thị trường EU, `= 0` nếu là thị trường đối chứng. |
@@ -105,10 +111,11 @@ ppmlhdfe CIF_EUR EUxPostxS1 if in_sample == 1, absorb(panel_id time_id) cluster(
 ## 📈 4. Bảng kiểm Tra cứu & Nghiệm thu (Audit Summary)
 
 Dữ liệu trích từ file `processed_data/audit_table_by_market.csv`:
-* **Tổng số dòng panel**: 217.249 dòng
-* **Mẫu hồi quy sạch (`in_sample == 1`)**: 205.056 dòng
+* **Tổng số dòng panel**: 233.686 dòng
+* **Mẫu hồi quy sạch (`in_sample == 1`)**: 220.587 dòng
 * **Số lượng mã HS4 phân tích**: 509 mã
+* **Các thị trường bao gồm**: 27 nước thành viên EU, EU27 (Total), New Zealand, và Nhật Bản (Japan).
 * **Thời gian**: 36 tháng liên tục (01/2022 – 12/2024)
 * **Quy tắc phân định**:
   * Các ô `not_published` (ô trống) không bị điền số 0 tự tiện.
-  * Toàn bộ mã băm SHA-256 của từng file thô được lưu trong `manifests/manifest_eurostat.json` và `manifests/manifest_nz.json`.
+  * Toàn bộ mã băm SHA-256 của từng file thô được lưu trong `manifests/manifest_eurostat.json`, `manifests/manifest_nz.json`, và `manifests/manifest_japan.json`.
