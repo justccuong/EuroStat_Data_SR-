@@ -130,9 +130,9 @@ def main():
 
     # New Zealand integration
     if os.path.exists(nz_processed):
-        df_nz = pd.read_csv(nz_processed)
+        df_nz = pd.read_csv(nz_processed, dtype={'HS4': str})
         for _, row in df_nz.iterrows():
-            code = str(row['HS4']).zfill(4)
+            code = str(row['HS4']).strip().split('.')[0].zfill(4)
             y = int(row['Year'])
             m = int(row['Month'])
             cif_eur = row['CIF_EUR']
@@ -169,10 +169,10 @@ def main():
     # Japan integration
     jp_processed = os.path.join(base_dir, "processed_data", "japan_monthly_509_2022_2024.csv")
     if os.path.exists(jp_processed):
-        df_jp = pd.read_csv(jp_processed)
+        df_jp = pd.read_csv(jp_processed, dtype={'HS4': str})
         print(f"Integrating Japan monthly data: {len(df_jp)} records...")
         for _, row in df_jp.iterrows():
-            code = str(row['HS4']).zfill(4)
+            code = str(row['HS4']).strip().split('.')[0].zfill(4)
             y = int(row['Year'])
             m = int(row['Month'])
             cif_eur = row['CIF_EUR']
@@ -207,7 +207,17 @@ def main():
             })
 
     df_panel = pd.DataFrame(panel_records)
+    df_panel['HS4'] = df_panel['HS4'].astype(str).str.strip().str.split('.').str[0].str.zfill(4)
     print(f"Total Combined Panel rows: {len(df_panel)}")
+
+    # Load Tu_dien_bien if data-demo.xlsx exists
+    demo_path = os.path.join(base_dir, "data-demo.xlsx")
+    df_dict = None
+    if os.path.exists(demo_path):
+        try:
+            df_dict = pd.read_excel(demo_path, sheet_name="Tu_dien_bien")
+        except Exception:
+            pass
 
     # Exports
     dta_path = os.path.join(out_dir, "master_panel_stata.dta")
@@ -215,26 +225,34 @@ def main():
     print(f"Exported: {dta_path}")
 
     csv_path = os.path.join(out_dir, "master_panel.csv")
-    df_panel.to_csv(csv_path, index=False)
-    print(f"Exported: {csv_path}")
+    try:
+        df_panel.to_csv(csv_path, index=False)
+        print(f"Exported: {csv_path}")
+    except Exception as e:
+        print(f"Notice (master_panel.csv locked): {e}")
 
+    # Export Full Excel Master Panel
     xlsx_path = os.path.join(out_dir, "master_panel.xlsx")
     try:
         with pd.ExcelWriter(xlsx_path, engine='openpyxl') as writer:
-            df_panel.iloc[:50000].to_excel(writer, sheet_name="Panel_Sample_50k", index=False)
+            df_panel.to_excel(writer, sheet_name="Panel_Master", index=False)
             df_hs4_chars.to_excel(writer, sheet_name="HS4_2022_Chars", index=False)
+            if df_dict is not None:
+                df_dict.to_excel(writer, sheet_name="Tu_dien_bien", index=False)
         print(f"Exported: {xlsx_path}")
     except Exception as e:
-        print(f"Notice (master_panel.xlsx): {e}")
+        print(f"Notice (master_panel.xlsx locked): {e}")
 
     xlsx_full_path = os.path.join(out_dir, "master_panel_full.xlsx")
     try:
         with pd.ExcelWriter(xlsx_full_path, engine='openpyxl') as writer:
             df_panel.to_excel(writer, sheet_name="Panel_Full", index=False)
             df_hs4_chars.to_excel(writer, sheet_name="HS4_2022_Chars", index=False)
+            if df_dict is not None:
+                df_dict.to_excel(writer, sheet_name="Tu_dien_bien", index=False)
         print(f"Exported: {xlsx_full_path}")
     except Exception as e:
-        print(f"Notice (master_panel_full.xlsx): {e}")
+        print(f"Notice (master_panel_full.xlsx locked): {e}")
 
 if __name__ == "__main__":
     main()
