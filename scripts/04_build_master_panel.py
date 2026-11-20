@@ -208,7 +208,16 @@ def main():
 
     df_panel = pd.DataFrame(panel_records)
     df_panel['HS4'] = df_panel['HS4'].astype(str).str.strip().str.split('.').str[0].str.zfill(4)
-    print(f"Total Combined Panel rows: {len(df_panel)}")
+    
+    # Sort panel: HS4 -> Market (Alphabetical A-Z) -> Year -> Month
+    df_panel = df_panel.sort_values(
+        by=['HS4', 'Market', 'Year', 'Month'],
+        ascending=[True, True, True, True],
+        ignore_index=True
+    )
+    print(f"Total Combined Panel rows (sorted by HS4 x Market (A-Z) x Time): {len(df_panel)}")
+
+    df_hs4_chars = df_hs4_chars.sort_values(by=['HS4'], ignore_index=True)
 
     # Load Tu_dien_bien if data-demo.xlsx exists
     demo_path = os.path.join(base_dir, "data-demo.xlsx")
