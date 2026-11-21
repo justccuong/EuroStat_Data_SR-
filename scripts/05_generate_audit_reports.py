@@ -28,7 +28,7 @@ def main():
         unique_hs4=('HS4', 'nunique')
     ).reset_index()
     market_audit['total_cif_mil_eur'] = market_audit['total_cif_eur'] / 1e6
-    market_audit = market_audit.sort_values(by='total_obs', ascending=False)
+    market_audit = market_audit.sort_values(by='Market', ascending=True)
     market_audit.to_csv(os.path.join(proc_dir, "audit_table_by_market.csv"), index=False)
 
     # By month
